@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nextcloud Home Server</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f7f6f3; --surface: #ffffff; --border: #e4e2dc;
+      --text: #1a1917; --muted: #7a7870; --accent: #2a5caa;
+      --accent-soft: #eef2fa; --tag-bg: #eeece8;
+      --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 900px; margin: 0 auto; padding: 0 32px; }
+    header { padding: 56px 0 48px; border-bottom: 1px solid var(--border); opacity: 0; animation: fadeUp 0.6s ease forwards; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-decoration: none; margin-bottom: 32px; transition: color 0.2s; }
+    .back-link:hover { color: var(--accent); }
+    .back-link svg { width: 13px; height: 13px; stroke: currentColor; fill: none; }
+    .hero-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    h1 { font-family: var(--mono); font-size: clamp(22px, 4vw, 34px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px; }
+    .hero-desc { font-size: 15px; color: var(--muted); font-weight: 300; max-width: 620px; line-height: 1.65; margin-bottom: 24px; }
+    .hero-links { display: flex; gap: 10px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; padding: 7px 14px; border-radius: 3px; border: 1px solid var(--border); color: var(--muted); transition: all 0.15s; }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.primary:hover { background: #1e4a8a; }
+    .btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+    .section { padding: 48px 0; border-bottom: 1px solid var(--border); opacity: 0; animation: fadeUp 0.5s ease forwards; }
+    .section:last-of-type { border-bottom: none; }
+    .section-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* STACK TABLE */
+    .spec-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .spec-table th { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg); }
+    .spec-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    .spec-table tr:last-child td { border-bottom: none; }
+    .spec-table td:first-child { font-weight: 500; min-width: 140px; white-space: nowrap; }
+    .spec-table code { font-family: var(--mono); font-size: 12px; background: var(--tag-bg); padding: 2px 6px; border-radius: 2px; }
+
+    /* PIPELINE */
+    .pipeline { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .pipe-stage { background: var(--surface); padding: 20px 24px; display: flex; gap: 16px; }
+    .pipe-num { font-family: var(--mono); font-size: 11px; color: var(--accent); min-width: 20px; font-weight: 500; padding-top: 2px; flex-shrink: 0; }
+    .pipe-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .pipe-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.55; }
+    .pipe-desc code { font-family: var(--mono); font-size: 11px; background: var(--tag-bg); padding: 1px 5px; border-radius: 2px; color: var(--text); }
+
+    /* TAKEAWAYS */
+    .takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .takeaway { background: var(--surface); padding: 20px 22px; }
+    .takeaway-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+    .takeaway-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.55; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .section:nth-child(2) { animation-delay: 0.05s; }
+    .section:nth-child(3) { animation-delay: 0.10s; }
+    .section:nth-child(4) { animation-delay: 0.15s; }
+    .section:nth-child(5) { animation-delay: 0.20s; }
+    footer { padding: 28px 0; border-top: 1px solid var(--border); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-inner span, .footer-inner a { font-family: var(--mono); font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.04em; transition: color 0.15s; }
+    .footer-inner a:hover { color: var(--accent); }
+    @media (max-width: 600px) { .container { padding: 0 20px; } .takeaways { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <a class="back-link" href="https://komo-248.github.io/komo.github.io">
+      <svg viewBox="0 0 24 24" stroke-width="1.6"><polyline points="15 18 9 12 15 6"/></svg>
+      Portfolio
+    </a>
+    <div class="hero-label">Software &amp; Infrastructure</div>
+    <h1>Nextcloud Home Server</h1>
+    <p class="hero-desc">A self-hosted personal cloud running on an Inovato Quadra ARM SBC — accessible from anywhere over HTTPS via Cloudflare Tunnel, with no open ports on the home router. Containerized with Docker, managed through Portainer, and monitored with Uptime Kuma.</p>
+    <div class="hero-links">
+      <a class="btn primary" href="https://github.com/komo-248/Nextcloud-Home-Server/tree/main" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- STACK -->
+  <section class="section">
+    <div class="section-label">Stack</div>
+    <table class="spec-table">
+      <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+      <tbody>
+        <tr><td>Hardware</td><td>Inovato Quadra — ARM SBC (Allwinner H616), eMMC OS, external USB SSD for data</td></tr>
+        <tr><td>OS</td><td>Armbian (Debian-based, headless) — migrated from microSD to eMMC</td></tr>
+        <tr><td>Container Runtime</td><td>Docker</td></tr>
+        <tr><td>Container UI</td><td>Portainer CE — browser-based management of stacks, volumes, logs</td></tr>
+        <tr><td>Database</td><td>MariaDB (Docker container) — Nextcloud backend</td></tr>
+        <tr><td>Application</td><td>Nextcloud (Docker container) — exposed on port <code>9321</code></td></tr>
+        <tr><td>Tunneling</td><td>Cloudflare Zero Trust Tunnel — outbound-only HTTPS, no port forwarding</td></tr>
+        <tr><td>Caching</td><td>PHP APCu — local memory cache for Nextcloud performance</td></tr>
+        <tr><td>Monitoring</td><td>Uptime Kuma — self-hosted uptime dashboard with cron job heartbeat checks</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SETUP PROCESS -->
+  <section class="section">
+    <div class="section-label">Setup Process</div>
+    <div class="pipeline">
+      <div class="pipe-stage">
+        <div class="pipe-num">01</div>
+        <div>
+          <div class="pipe-title">OS to eMMC</div>
+          <div class="pipe-desc">Flashed fresh Armbian to microSD, booted, then migrated OS to internal eMMC via <code>armbian-config</code>. MicroSD removed after — Quadra boots entirely from eMMC with faster I/O and no card wear.</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-num">02</div>
+        <div>
+          <div class="pipe-title">External Storage</div>
+          <div class="pipe-desc">USB SSD partitioned with <code>fdisk</code>, formatted <code>ext4</code>, mounted at <code>/mnt/NextcloudStorage</code>, and made persistent via <code>/etc/fstab</code>. Permissions set to <code>www-data</code> for Nextcloud write access. Keeps data off eMMC and separates OS from storage.</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-num">03</div>
+        <div>
+          <div class="pipe-title">Docker + Portainer</div>
+          <div class="pipe-desc">Docker installed via official install script. Portainer CE deployed as a container with socket access — provides a web UI for managing all subsequent containers without SSH for routine tasks.</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-num">04</div>
+        <div>
+          <div class="pipe-title">Nextcloud + MariaDB Stack</div>
+          <div class="pipe-desc">Deployed as a Portainer stack via Docker Compose. Nextcloud data volume mapped directly to the external SSD. MariaDB container name used as hostname — Docker internal DNS resolves it automatically. Database credentials kept out of version control.</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-num">05</div>
+        <div>
+          <div class="pipe-title">Cloudflare Zero Trust Tunnel</div>
+          <div class="pipe-desc">Tunnel created in Cloudflare Zero Trust dashboard, <code>cloudflared</code> deployed as a Docker container with restart policy Always. Public hostname configured to route <code>yoursubdomain.domain.com</code> to <code>localhost:9321</code>. Happy Eyeballs and Chunk Encoding disabled to prevent upload stalls through the proxy.</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-num">06</div>
+        <div>
+          <div class="pipe-title">Nextcloud Configuration</div>
+          <div class="pipe-desc">Trusted domain added to <code>config.php</code>. <code>overwriteprotocol → https</code> set to force correct link generation behind the reverse proxy. Upload limits raised to 16GB via <code>.htaccess</code>. WebDAV/CardDAV/CalDAV redirects configured in Apache. APCu memory cache enabled.</div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-num">07</div>
+        <div>
+          <div class="pipe-title">Cron + Uptime Kuma</div>
+          <div class="pipe-desc">Background jobs switched to system cron (more reliable than AJAX). Cron job runs <code>cron.php</code> every 5 minutes as <code>www-data</code>. Uptime Kuma deployed as a stack and configured to monitor the cron endpoint at 300-second intervals with heartbeat alerts.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY TAKEAWAYS -->
+  <section class="section">
+    <div class="section-label">Key Takeaways</div>
+    <div class="takeaways">
+      <div class="takeaway">
+        <div class="takeaway-title">Cloudflare Tunnel over port forwarding</div>
+        <div class="takeaway-desc">Running the tunnel as outbound-only means the router never has an exposed port. The server is accessible from anywhere over HTTPS without touching NAT or firewall rules — and Cloudflare handles DDoS protection at the edge.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-title">overwriteprotocol is non-optional behind a proxy</div>
+        <div class="takeaway-desc">Without this config flag, Nextcloud generates internal <code>http://</code> links even when the external connection is HTTPS. Sharing links, app sync, and WebDAV all break silently. This was the single most confusing part of the setup.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-title">Separate OS and data volumes</div>
+        <div class="takeaway-desc">Keeping the Nextcloud data directory on an external SSD rather than the eMMC prevents OS storage from filling up, extends eMMC lifespan, and makes it easy to swap or expand storage without touching the OS or container configuration.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-title">File locking failures need SQL intervention</div>
+        <div class="takeaway-desc">Nextcloud's file locking table can deadlock under certain conditions — no UI escape. The fix is to enable maintenance mode, connect directly to MariaDB, truncate <code>oc_file_locks</code>, and restart the container. Knowing this in advance saves significant debugging time.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-title">Portainer makes container ops practical</div>
+        <div class="takeaway-desc">Managing multiple containers (Nextcloud, MariaDB, cloudflared, Uptime Kuma) via CLI on a headless ARM board gets unwieldy quickly. Portainer's stack-based deployment and web console make restarts, log inspection, and config changes accessible from any browser.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-title">ARM hardware runs this stack reliably</div>
+        <div class="takeaway-desc">The Quadra handles Nextcloud, MariaDB, cloudflared, and Uptime Kuma simultaneously at low power. Migrating to eMMC and using a dedicated data SSD keeps I/O fast enough that the ARM bottleneck is effectively invisible for personal cloud use.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span>komo-248 · Nextcloud Server</span>
+      <a href="https://komo-248.github.io/komo.github.io">← Portfolio</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
